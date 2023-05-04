@@ -3,7 +3,7 @@ import { ClientTCP } from '@nestjs/microservices';
 import { AcaoDto } from './dto/acao.dto';
 import { acaoTodayDto } from './dto/acaoToday.dto';
 import logger from '../utils/logger';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AcaoService {
@@ -13,9 +13,12 @@ export class AcaoService {
 
   async getAcaoToday(acao: acaoTodayDto): Promise<AcaoDto> {
     try {
-      const ret: AcaoDto = await firstValueFrom(
-        this.acaoClient.send('get_acao_today', JSON.stringify(acao)),
+      const valRet = await this.acaoClient.send(
+        'get_acao_today',
+        JSON.stringify(acao),
       );
+
+      const ret: AcaoDto = await firstValueFrom(valRet);
 
       return ret;
     } catch (err) {

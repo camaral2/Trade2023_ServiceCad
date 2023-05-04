@@ -14,8 +14,9 @@ async function bootstrap() {
     transport: Transport.TCP,
   });
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen();
+  await app.listen().then(() => {
+    logger.log(`Microservice ${serviceName}:${serviceVersion} running`);
+  });
 }
 
 bootstrap();
-logger.log(`Microservice ${serviceName}:${serviceVersion} running`);
