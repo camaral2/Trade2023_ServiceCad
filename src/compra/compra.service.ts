@@ -92,10 +92,7 @@ export class CompraService {
   private async setValues(value: number, dataEntity: Compra): Promise<Compra> {
     if (dataEntity.qtdSale > 0) {
       dataEntity.saleSum = util.numero(value * dataEntity.qtdSale, 2);
-      dataEntity.valueSum = util.numero(
-        dataEntity.valor * dataEntity.qtdSale,
-        2,
-      );
+      dataEntity.valueSum = util.numero(dataEntity.valor * dataEntity.qtd, 2);
     } else {
       dataEntity.saleSum = util.numero(value * dataEntity.qtd, 2);
       dataEntity.valueSum = util.numero(dataEntity.valor * dataEntity.qtd, 2);

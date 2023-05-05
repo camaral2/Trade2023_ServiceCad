@@ -21,5 +21,5 @@ export class UpdateCompraDto extends PartialType(CreateCompraDto) {
   })
   @IsDate()
   @Type(() => Date)
-  dateSale: Date;
+  dateSale?: Date;
 }
