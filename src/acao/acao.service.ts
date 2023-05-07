@@ -3,7 +3,7 @@ import { ClientTCP } from '@nestjs/microservices';
 import { AcaoDto } from './dto/acao.dto';
 import { acaoTodayDto } from './dto/acaoToday.dto';
 import logger from '../utils/logger';
-import { Observable, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AcaoService {

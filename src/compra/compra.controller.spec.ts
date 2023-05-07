@@ -4,13 +4,15 @@ import { CompraService } from './compra.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Compra } from './entities/compra.entity';
 import { AcaoService } from '../acao/acao.service';
-import { configAcao } from '../acao/entities/configAcao.entity';
-import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AcaoModule } from '../acao/acao.module';
+import { CreateCompraDto } from './dto/create-compra.dto';
+import { UpdateCompraDto } from './dto/update-compra.dto';
+import { ReturnDeleteUpdateDto } from './dto/return-delete-update-compra.dto';
 
 describe('CompraController', () => {
   let controller: CompraController;
-  //let compraService: CompraService;
+  let compraService: CompraService;
   //let app: INestApplication;
 
   beforeEach(async () => {
@@ -46,31 +48,6 @@ describe('CompraController', () => {
           provide: getRepositoryToken(Compra),
           useValue: comprasRepository,
         },
-        {
-          provide: ClientProxy,
-          name: 'AUTH_CLIENT',
-          useValue: {
-            emit: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(configAcao),
-          useFactory: () => ({
-            saveNote: jest.fn(() => []),
-            findAllNotes: jest.fn(() => []),
-            findOneNote: jest.fn(),
-            updateNote: jest.fn(),
-            deleteNote: jest.fn(),
-          }),
-        },
-        // {
-        //   provide: ConfigService,
-        //   useValue: mockedConfigService,
-        // },
-        // {
-        //   provide: JwtService,
-        //   useValue: mockedJwtService,
-        // },
       ],
       imports: [
         AcaoModule,
@@ -81,30 +58,93 @@ describe('CompraController', () => {
     }).compile();
 
     controller = moduleRef.get<CompraController>(CompraController);
-    //compraService = moduleRef.get<CompraService>(CompraService);
-
-    // app = module.createNestApplication();
-    // app.useGlobalPipes(new ValidationPipe());
-    // await app.init();
+    compraService = moduleRef.get<CompraService>(CompraService);
   });
-
-  // afterEach(done => {
-
-  //   serverApp.server.server.close(() => done());
-  // });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  // describe('and using invalid data', () => {
-  //   it('should throw an error', () => {
-  //     return request(app.getHttpServer())
-  //       .post('/authentication/register')
-  //       .send({
-  //         name: mockedUser.name
-  //       })
-  //       .expect(400)
-  //   });
-  //});
+  describe('create', () => {
+    it('should return a new compra', async () => {
+      const createDto: CreateCompraDto = {
+        acao: 'ACAO',
+        user: 'USER',
+        valor: 1,
+        qtd: 1,
+        data: new Date(),
+      };
+      const compra: Compra = new Compra();
+      jest.spyOn(compraService, 'create').mockResolvedValueOnce(compra);
+
+      const result: Compra = await controller.create(createDto);
+
+      expect(compraService.create).toHaveBeenCalledWith(createDto);
+      expect(result).toEqual(compra);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return an array of compras', async () => {
+      const user = 'USER';
+      const compras: Compra[] = [new Compra()];
+      jest.spyOn(compraService, 'findAll').mockResolvedValueOnce(compras);
+
+      const result: Compra[] = await controller.findAll(user);
+
+      expect(compraService.findAll).toHaveBeenCalledWith(user);
+      expect(result).toEqual(compras);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a compra by id', async () => {
+      const id = 'ID';
+      const compra: Compra = new Compra();
+      jest.spyOn(compraService, 'findOne').mockResolvedValueOnce(compra);
+
+      const result: Compra = await controller.findOne(id);
+
+      expect(compraService.findOne).toHaveBeenCalledWith(id);
+      expect(result).toEqual(compra);
+    });
+  });
+
+  describe('update', () => {
+    it('should return the number of affected rows', async () => {
+      const id = 'ID';
+      const updateDto: UpdateCompraDto = {
+        valor: 1,
+        qtd: 1,
+        valueSale: 0,
+        qtdSale: 0,
+      };
+      const result: ReturnDeleteUpdateDto = { affected: 1 };
+      jest.spyOn(compraService, 'update').mockResolvedValueOnce(result);
+
+      const updateResult: ReturnDeleteUpdateDto = await controller.update(
+        id,
+        updateDto,
+      );
+
+      expect(compraService.update).toHaveBeenCalledWith(id, updateDto);
+      expect(updateResult).toEqual(result);
+    });
+  });
+
+  describe('remove', () => {
+    it('should return the number of affected rows', async () => {
+      const id = 'ID';
+      const compareDelete: ReturnDeleteUpdateDto = {
+        affected: 1,
+      };
+
+      jest.spyOn(compraService, 'remove').mockResolvedValueOnce(compareDelete);
+
+      const deleteResult: ReturnDeleteUpdateDto = await controller.remove(id);
+
+      expect(compraService.remove).toHaveBeenCalledWith(id);
+      expect(deleteResult).toEqual(compareDelete);
+    });
+  });
 });

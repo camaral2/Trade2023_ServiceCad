@@ -117,7 +117,7 @@ export class CompraService {
   async create(createCompraDto: CreateCompraDto): Promise<Compra> {
     const { acao, user, valor, qtd, data } = createCompraDto;
 
-    const compra = new Compra(createCompraDto);
+    const compra = new Compra();
 
     compra._id = uuid.v4();
     compra.acao = acao;
@@ -126,8 +126,8 @@ export class CompraService {
     compra.qtd = qtd;
     compra.data = data;
 
-    await compra.save();
-    return compra;
+    const ret = await this.compraRepository.save(compra);
+    return ret;
   }
 
   async update(
@@ -149,9 +149,9 @@ export class CompraService {
     }
   }
 
-  async remove(id: string): Promise<number | null> {
+  async remove(id: string): Promise<ReturnDeleteUpdateDto> {
     logger.log(`delete this compra - id:${id}`);
     const ret: DeleteResult = await this.compraRepository.delete({ _id: id });
-    return ret.affected;
+    return { affected: ret.affected };
   }
 }

@@ -35,7 +35,7 @@ export class CompraController {
   }
 
   @MessagePattern('compra_remove')
-  async remove(id: string): Promise<number | null> {
+  async remove(id: string): Promise<ReturnDeleteUpdateDto> {
     return await this.compraService.remove(id);
   }
 }

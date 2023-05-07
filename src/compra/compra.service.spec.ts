@@ -62,8 +62,9 @@ describe('CompraService', () => {
   const mockCompraRepository = () => ({
     find: jest.fn(() => Promise.resolve(listCompraMock)),
     findOne: jest.fn(() => Promise.resolve(compraMockNotSales)),
-    save: jest.fn(() => Promise.resolve({})),
     update: jest.fn(() => Promise.resolve({})),
+    save: jest.fn().mockResolvedValue({}),
+    delete: jest.fn().mockResolvedValue({}),
   });
 
   const mockAcaoService = () => ({
@@ -146,7 +147,6 @@ describe('CompraService', () => {
       expect(ret.percentAdd).toEqual(percentual);
     });
   });
-
   describe('Find a compra', () => {
     it('Should return compra register sales', async () => {
       const spyCompraSales = jest
@@ -232,28 +232,34 @@ describe('CompraService', () => {
     it('Should return a compra created', async () => {
       const spySaveInsert = jest
         .spyOn(compraRepository, 'save')
-        .mockImplementationOnce(() =>
-          Promise.resolve(compraMockSales as Compra),
-        );
+        .mockResolvedValue(compraMockSales as Compra);
 
-      const dataCreate: CreateCompraDto = compraMockSales;
-      const ret = await service.create(dataCreate);
+      const createCompraDto: CreateCompraDto = {
+        acao: 'mock-acao',
+        user: 'mock-user',
+        valor: 10.0,
+        qtd: 100,
+        data: new Date(),
+      };
+
+      const ret = await service.create(createCompraDto);
 
       expect(compraRepository.save).toBeCalled();
       expect(spySaveInsert).toHaveBeenCalled();
       expect(ret).toEqual(compraMockSales);
+
+      expect(ret._id).toBeDefined();
+      expect(ret._id).not.toBeNull();
     });
 
     it('Should return a compra update', async () => {
-      const mockUpdateResult: UpdateResult = {
-        affected: 1,
-        raw: undefined,
-        generatedMaps: [],
-      };
+      const mockUpdateResult = new UpdateResult();
+      mockUpdateResult.affected = 1;
+      mockUpdateResult.raw = { result: compraMockSalesWithQtd };
 
       const spySaveUpdate = jest
         .spyOn(compraRepository, 'update')
-        .mockImplementationOnce(() => Promise.resolve(mockUpdateResult));
+        .mockResolvedValueOnce(mockUpdateResult);
 
       const dataUpdate: UpdateCompraDto = {
         valueSale: compraMockSalesWithQtd.valueSale,
@@ -262,14 +268,49 @@ describe('CompraService', () => {
 
       const ret = await service.update(compraMockSalesWithQtd._id, dataUpdate);
 
-      expect(compraRepository.save).toBeCalled();
+      expect(compraRepository.update).toBeCalled();
       expect(spySaveUpdate).toHaveBeenCalled();
 
       const compareUpdate: ReturnDeleteUpdateDto = {
         affected: 1,
       };
 
-      expect(ret).toEqual(compareUpdate);
+      expect(ret).toMatchObject(compareUpdate);
+      expect(ret.affected).toEqual(compareUpdate.affected);
+    });
+
+    it('Should return error in Update', async () => {
+      const spyError = jest
+        .spyOn(compraRepository, 'update')
+        .mockRejectedValue(new Error('erro fake'));
+
+      await expect(
+        service.update(compraMockNotSales._id, { valueSale: 2, qtdSale: 1 }),
+      ).rejects.toThrow('erro fake');
+
+      expect(compraRepository.update).toHaveBeenCalled();
+      expect(spyError).toHaveBeenCalled();
+    });
+
+    it('Should compra delete', async () => {
+      const mockDelResult = new UpdateResult();
+      mockDelResult.affected = 1;
+
+      const spyDelete = jest
+        .spyOn(compraRepository, 'delete')
+        .mockResolvedValueOnce(mockDelResult);
+
+      const ret = await service.remove(compraMockSalesWithQtd._id);
+
+      expect(compraRepository.delete).toBeCalled();
+      expect(spyDelete).toHaveBeenCalled();
+
+      const compareDelete: ReturnDeleteUpdateDto = {
+        affected: 1,
+      };
+
+      expect(ret).toMatchObject(compareDelete);
+      expect(ret.affected).toEqual(compareDelete.affected);
     });
   });
 });

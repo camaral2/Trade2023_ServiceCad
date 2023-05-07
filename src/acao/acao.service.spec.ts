@@ -4,7 +4,6 @@ import { acaoTodayDto } from './dto/acaoToday.dto';
 import { Observable } from 'rxjs';
 import { AcaoDto } from './dto/acao.dto';
 import { UnauthorizedException } from '@nestjs/common';
-import { ClientTCP } from '@nestjs/microservices';
 
 describe('AcaoService', () => {
   let service: AcaoService;
@@ -17,8 +16,6 @@ describe('AcaoService', () => {
     valueMax: 2,
     dataAcao: new Date(),
   };
-
-  const acao: acaoTodayDto = { acao: 'MGLU3' };
 
   const dataMockObservable = new Observable((observer) => {
     observer.next(acaoMock);
@@ -57,12 +54,16 @@ describe('AcaoService', () => {
 
   describe('root', () => {
     it('should data of MicroService of Acao"', async () => {
+      const acao: acaoTodayDto = { acao: 'MGLU3' };
+
       const ret: AcaoDto = await service.getAcaoToday(acao);
       expect(ret).toEqual(acaoMock);
       expect(mockHttpService.send).toHaveBeenCalled();
     });
 
     it('should return error', async () => {
+      const acao: acaoTodayDto = { acao: 'MGLU3' };
+
       const spyError = jest
         .spyOn(mockHttpService, 'send')
         .mockRejectedValue(new Error('erro fake'));
