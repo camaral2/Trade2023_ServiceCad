@@ -1,0 +1,72 @@
+name: 🚀 Deploy
+ 
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        mongodb-version: ['6.0']
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile      
+              
+    - name: Running testing
+      run: yarn test
+
+    - name: build
+      run: yarn build    
+
+    - name: copy dist via ssh password
+      uses: appleboy/scp-action@v0.1.4
+      env:
+        PORT: 22
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: 22
+        source: "dist/src/*"
+        target: "apps_nodejs/trade2023_servicecad"
+        debug: true  
+        strip_components: 2
+
+    - name: copy file package.json via ssh password
+      uses: appleboy/scp-action@v0.1.4
+      env:
+        PORT: 22
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: 22
+        source: package.json
+        target: ./apps_nodejs/trade2023_servicecad/
+        debug: true   
+
+    - name: Run production scripts
+      uses: appleboy/ssh-action@v0.1.4
+      env:
+        PORT: 22
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: 22
+        script: |
+           cd ./apps_nodejs/trade2023_servicecad/
+           npm update
+           pm2 restart trade2023_servicecad

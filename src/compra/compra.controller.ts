@@ -6,8 +6,8 @@ import { UpdateCompraDto } from './dto/update-compra.dto';
 import { Compra } from './entities/compra.entity';
 import { MessagePattern } from '@nestjs/microservices';
 
-@Controller('compra')
 @UsePipes(new ValidationPipe())
+@Controller()
 export class CompraController {
   constructor(private readonly compraService: CompraService) {}
 

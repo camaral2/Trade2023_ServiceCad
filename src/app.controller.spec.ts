@@ -14,9 +14,16 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+  it('should be defined - AppController', () => {
+    expect(AppController).toBeDefined();
+  });
+
+  it('should return "Version"', () => {
+    expect(appController.getVersion()).toMatchObject({
+      app: 'trade2023_servicecad',
+      author: 'Cristian dos Santos Amaral',
+      email: 'cristian_amaral@hotmail.com',
+      version: process.env.npm_package_version,
     });
   });
 });
