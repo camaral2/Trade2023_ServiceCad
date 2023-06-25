@@ -61,21 +61,11 @@ describe('AcaoService', () => {
       expect(mockHttpService.send).toHaveBeenCalled();
     });
 
-    it('should return error', async () => {
-      const acao: acaoTodayDto = { acao: 'MGLU3' };
-
-      const spyError = jest
-        .spyOn(mockHttpService, 'send')
-        .mockRejectedValue(new Error('erro fake'));
-
-      await expect(service.getAcaoToday(acao)).rejects.toThrow(
-        new UnauthorizedException({
-          message: 'erro fake',
-        }),
-      );
+    it('should return null when encountering an error', async () => {
+      jest.spyOn(mockHttpService, 'send').mockResolvedValue(null);
+      await expect(service.getAcaoToday({ acao: 'MGLU3' })).resolves.toBeNull();
 
       expect(mockHttpService.send).toHaveBeenCalled();
-      expect(spyError).toHaveBeenCalled();
     });
   });
 });

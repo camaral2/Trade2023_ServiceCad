@@ -21,7 +21,7 @@ export class AcaoService {
       return ret;
     } catch (err) {
       logger.error(`Error: ${err} - [${acao.acao}]`);
-      //throw err;
+      return null;
     }
   }
 }
