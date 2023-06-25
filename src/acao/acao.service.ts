@@ -13,17 +13,15 @@ export class AcaoService {
 
   async getAcaoToday(acao: acaoTodayDto): Promise<AcaoDto> {
     try {
-      const valRet = await this.acaoClient.send(
-        'get_acao_today',
-        JSON.stringify(acao),
-      );
+      logger.log('Run get_acao_today: ' + acao.acao);
+      const valRet = await this.acaoClient.send('get_acao_today', acao);
 
       const ret: AcaoDto = await firstValueFrom(valRet);
 
       return ret;
     } catch (err) {
       logger.error(`Error: ${err} - [${acao.acao}]`);
-      throw err;
+      //throw err;
     }
   }
 }

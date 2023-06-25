@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import logger from '../utils/logger';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ObjectId, Repository, UpdateResult } from 'typeorm';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { Compra } from './entities/compra.entity';
@@ -24,14 +24,21 @@ export class CompraService {
     private readonly compraRepository: Repository<Compra>,
     private readonly acaoService: AcaoService,
   ) {}
-
+  async processMessage(data: any): Promise<any> {
+    // Process the message
+    // Example: Log the message and return a response
+    console.log('Received message:', data);
+    return { message: 'Message processed successfully' };
+  }
   async findAll(userFilter: string): Promise<Compra[]> {
     try {
       const arr = await this.compraRepository.find({
         where: { user: userFilter },
       });
 
-      logger.log(`Acoes register:(${arr.length}) - filter:(${userFilter})`);
+      logger.log(
+        `Acoes register of user:(${arr.length}) - filter:(${userFilter})`,
+      );
 
       for (let index = 0; index < arr.length; index++) {
         const element = arr[index];

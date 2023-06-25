@@ -9,6 +9,7 @@ export class ConfigService {
 
     this.envConfig = {
       port: process.env.CAD_SERVICE_PORT,
+      host: process.env.CAD_SERVICE_HOST,
     };
     this.envConfig.acaoService = {
       options: {

@@ -15,12 +15,16 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   it('/ (GET)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
       .expect(
-        '{"app":"trade2023_servicecad","version":"1.1.1","author":"Cristian dos Santos Amaral"}',
+        '{"app":"trade2023_servicecad","version":"1.1.2","author":"Cristian dos Santos Amaral", "email":"cristian_amaral@hotmail.com}',
       );
   });
 });

@@ -5,9 +5,10 @@ import { ReturnDeleteUpdateDto } from './dto/return-delete-update-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { Compra } from './entities/compra.entity';
 import { MessagePattern } from '@nestjs/microservices';
+import logger from '../utils/logger';
 
 @UsePipes(new ValidationPipe())
-@Controller()
+@Controller('compras')
 export class CompraController {
   constructor(private readonly compraService: CompraService) {}
 
