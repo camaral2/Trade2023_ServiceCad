@@ -1,8 +1,12 @@
-name: 🚀 Deploy
- 
+name: 🚀 Production Deployment
+
 on:
   push:
-  pull_request:
+    branches:
+      - main
+
+env:
+  MONGO_URL: ${{secrets.MONGO_URL}}
 
 jobs:
   build:
@@ -66,7 +70,7 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
         port: 22
+        command_timeout: "30m"
         script: |
            cd ./apps_nodejs/trade2023_servicecad/
-           npm update
-           pm2 restart trade2023_servicecad
+           npm run update-and-restart
