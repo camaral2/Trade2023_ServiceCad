@@ -18,8 +18,8 @@ export class CompraController {
   }
 
   @MessagePattern('compra_findAll')
-  async findAll(user: string): Promise<Compra[]> {
-    return await this.compraService.findAll(user);
+  async findAll(user: string, acao: string): Promise<Compra[]> {
+    return await this.compraService.findAll(user, acao);
   }
 
   @MessagePattern('compra_findOne')

@@ -100,7 +100,10 @@ describe('CompraService', () => {
 
   describe('Find of compra', () => {
     it('Should return all compra register', async () => {
-      const ret = await service.findAll(compraMockNotSales.user);
+      const ret = await service.findAll(
+        compraMockNotSales.user,
+        compraMockNotSales.acao,
+      );
 
       expect(compraRepository.find).toBeCalled();
       expect(ret.length).toEqual(listCompraMock.length);
@@ -111,9 +114,9 @@ describe('CompraService', () => {
         .spyOn(compraRepository, 'find')
         .mockRejectedValue(new Error('erro fake'));
 
-      await expect(service.findAll(compraMockNotSales.user)).rejects.toThrow(
-        'erro fake',
-      );
+      await expect(
+        service.findAll(compraMockNotSales.user, compraMockNotSales.acao),
+      ).rejects.toThrow('erro fake');
 
       expect(compraRepository.find).toHaveBeenCalled();
       expect(spyError).toHaveBeenCalled();

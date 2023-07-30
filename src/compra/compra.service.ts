@@ -30,14 +30,14 @@ export class CompraService {
     console.log('Received message:', data);
     return { message: 'Message processed successfully' };
   }
-  async findAll(userFilter: string): Promise<Compra[]> {
+  async findAll(userFilter: string, acaoFilter: string): Promise<Compra[]> {
     try {
       const arr = await this.compraRepository.find({
-        where: { user: userFilter },
+        where: { user: userFilter, acao: acaoFilter },
       });
 
       logger.log(
-        `Acoes register of user:(${arr.length}) - filter:(${userFilter})`,
+        `Acoes register of user:(${arr.length}) - filter:(${userFilter}/${acaoFilter})`,
       );
 
       for (let index = 0; index < arr.length; index++) {

@@ -87,12 +87,13 @@ describe('CompraController', () => {
   describe('findAll', () => {
     it('should return an array of compras', async () => {
       const user = 'USER';
+      const acao = 'ACO';
       const compras: Compra[] = [new Compra()];
       jest.spyOn(compraService, 'findAll').mockResolvedValueOnce(compras);
 
-      const result: Compra[] = await controller.findAll(user);
+      const result: Compra[] = await controller.findAll(user, acao);
 
-      expect(compraService.findAll).toHaveBeenCalledWith(user);
+      expect(compraService.findAll).toHaveBeenCalledWith(user, acao);
       expect(result).toEqual(compras);
     });
   });
