@@ -6,6 +6,7 @@ import { UpdateCompraDto } from './dto/update-compra.dto';
 import { Compra } from './entities/compra.entity';
 import { MessagePattern } from '@nestjs/microservices';
 import logger from '../utils/logger';
+import { GetCompraDto } from './dto/get-compra.dto';
 
 @UsePipes(new ValidationPipe())
 @Controller('compras')
@@ -18,8 +19,15 @@ export class CompraController {
   }
 
   @MessagePattern('compra_findAll')
-  async findAll(user: string, acao: string): Promise<Compra[]> {
-    return await this.compraService.findAll(user, acao);
+  async findAll(filter: GetCompraDto): Promise<Compra[]> {
+    const ret = await this.compraService.findAll(filter.user, filter.acao);
+    console.dir(filter);
+
+    logger.log(
+      `Acoes register of user:(${ret.length}) - filter:(${filter.user}/${filter.acao})`,
+    );
+
+    return ret;
   }
 
   @MessagePattern('compra_findOne')

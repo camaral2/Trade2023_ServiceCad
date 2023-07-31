@@ -36,6 +36,10 @@ export class CompraService {
         where: { user: userFilter, acao: acaoFilter },
       });
 
+      console.log(
+        `Acoes register of user:(${arr.length}) - filter:(${userFilter}/${acaoFilter})`,
+      );
+
       logger.log(
         `Acoes register of user:(${arr.length}) - filter:(${userFilter}/${acaoFilter})`,
       );
