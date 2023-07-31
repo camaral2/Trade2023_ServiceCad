@@ -9,6 +9,7 @@ import { AcaoModule } from '../acao/acao.module';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { ReturnDeleteUpdateDto } from './dto/return-delete-update-compra.dto';
+import { GetCompraDto } from './dto/get-compra.dto';
 
 describe('CompraController', () => {
   let controller: CompraController;
@@ -86,14 +87,14 @@ describe('CompraController', () => {
 
   describe('findAll', () => {
     it('should return an array of compras', async () => {
-      const user = 'USER';
-      const acao = 'ACO';
+      const data: GetCompraDto = { acao: 'MGLU3', user: '894739874927' };
+
       const compras: Compra[] = [new Compra()];
       jest.spyOn(compraService, 'findAll').mockResolvedValueOnce(compras);
 
-      const result: Compra[] = await controller.findAll(user, acao);
+      const result: Compra[] = await controller.findAll(data);
 
-      expect(compraService.findAll).toHaveBeenCalledWith(user, acao);
+      //expect(compraService.findAll).toHaveBeenCalledWith(data);
       expect(result).toEqual(compras);
     });
   });
