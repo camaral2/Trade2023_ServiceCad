@@ -10,6 +10,7 @@ import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { ReturnDeleteUpdateDto } from './dto/return-delete-update-compra.dto';
 import { GetCompraDto } from './dto/get-compra.dto';
+import { ICompra } from './interfaces/compra.interface';
 
 describe('CompraController', () => {
   let controller: CompraController;
@@ -124,10 +125,10 @@ describe('CompraController', () => {
       const result: ReturnDeleteUpdateDto = { affected: 1 };
       jest.spyOn(compraService, 'update').mockResolvedValueOnce(result);
 
-      const updateResult: ReturnDeleteUpdateDto = await controller.update(
-        id,
-        updateDto,
-      );
+      const updateResult: ReturnDeleteUpdateDto = await controller.update({
+        id: id,
+        compra: updateDto as ICompra,
+      });
 
       expect(compraService.update).toHaveBeenCalledWith(id, updateDto);
       expect(updateResult).toEqual(result);
@@ -143,7 +144,10 @@ describe('CompraController', () => {
 
       jest.spyOn(compraService, 'remove').mockResolvedValueOnce(compareDelete);
 
-      const deleteResult: ReturnDeleteUpdateDto = await controller.remove(id);
+      const deleteResult: ReturnDeleteUpdateDto = await controller.remove({
+        id: id,
+        compra: null,
+      });
 
       expect(compraService.remove).toHaveBeenCalledWith(id);
       expect(deleteResult).toEqual(compareDelete);

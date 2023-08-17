@@ -16,6 +16,7 @@ import * as uuid from 'uuid';
 import { ReturnDeleteUpdateDto } from './dto/return-delete-update-compra.dto';
 import { acaoTodayDto } from '../acao/dto/acaoToday.dto';
 import { util } from '../utils/util';
+import { SetSaleCompraDto } from './dto/set-sale-compra.dto';
 
 @Injectable()
 export class CompraService {
@@ -35,10 +36,6 @@ export class CompraService {
       const arr = await this.compraRepository.find({
         where: { user: userFilter, acao: acaoFilter },
       });
-
-      console.log(
-        `Acoes register of user:(${arr.length}) - filter:(${userFilter}/${acaoFilter})`,
-      );
 
       logger.log(
         `Acoes register of user:(${arr.length}) - filter:(${userFilter}/${acaoFilter})`,
@@ -156,6 +153,25 @@ export class CompraService {
       return { affected: ret.affected };
     } catch (err) {
       logger.error(`Error update: ${err} - [id: ${id}]`);
+      throw err;
+    }
+  }
+
+  async setVenda(
+    id: string,
+    requestSale: SetSaleCompraDto,
+  ): Promise<ReturnDeleteUpdateDto> {
+    try {
+      logger.log(`Set venda this compra - id:${id}`);
+
+      const ret: UpdateResult = await this.compraRepository.update(
+        { _id: id },
+        requestSale,
+      );
+
+      return { affected: ret.affected };
+    } catch (err) {
+      logger.error(`Error setVenda: ${err} - [id: ${id}]`);
       throw err;
     }
   }

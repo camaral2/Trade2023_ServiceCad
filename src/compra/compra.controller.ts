@@ -7,6 +7,7 @@ import { Compra } from './entities/compra.entity';
 import { MessagePattern } from '@nestjs/microservices';
 import logger from '../utils/logger';
 import { GetCompraDto } from './dto/get-compra.dto';
+import { CompraRequestDto } from './dto/compra-request.dto';
 
 @UsePipes(new ValidationPipe())
 @Controller('compras')
@@ -21,7 +22,6 @@ export class CompraController {
   @MessagePattern('compra_findAll')
   async findAll(filter: GetCompraDto): Promise<Compra[]> {
     const ret = await this.compraService.findAll(filter.user, filter.acao);
-    console.dir(filter);
 
     logger.log(
       `Acoes register of user:(${ret.length}) - filter:(${filter.user}/${filter.acao})`,
@@ -36,15 +36,17 @@ export class CompraController {
   }
 
   @MessagePattern('compra_update')
-  async update(
-    id: string,
-    updateCompraDto: UpdateCompraDto,
-  ): Promise<ReturnDeleteUpdateDto> {
-    return await this.compraService.update(id, updateCompraDto);
+  async update(data: CompraRequestDto): Promise<ReturnDeleteUpdateDto> {
+    return await this.compraService.update(data.id, data.compra);
+  }
+
+  @MessagePattern('compra_venda')
+  async setVenda(data: CompraRequestDto): Promise<ReturnDeleteUpdateDto> {
+    return await this.compraService.setVenda(data.id, data.compra);
   }
 
   @MessagePattern('compra_remove')
-  async remove(id: string): Promise<ReturnDeleteUpdateDto> {
-    return await this.compraService.remove(id);
+  async remove(data: CompraRequestDto): Promise<ReturnDeleteUpdateDto> {
+    return await this.compraService.remove(data.id);
   }
 }

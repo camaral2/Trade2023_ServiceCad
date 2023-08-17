@@ -22,7 +22,7 @@ describe('AppService', () => {
         app: 'trade2023_servicecad',
         author: 'Cristian dos Santos Amaral',
         email: 'cristian_amaral@hotmail.com',
-        version: '1.2.4',
+        version: '1.2.5',
       });
     });
   });
